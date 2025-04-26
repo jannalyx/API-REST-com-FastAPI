@@ -24,3 +24,24 @@ def listar_livros():
         return [Livro(**livro) for livro in livros]  # Converte os dicionários em objetos Livro
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao listar livros: {str(e)}")
+
+@router.put("/livros/{livro_id}", response_model=Livro)
+def atualizar_livro(livro_id: int, livro_atualizado: Livro):
+    livros = listar_livros()
+    for i, livro in enumerate(livros):
+        if livro.id == livro_id:
+            livros[i] = livro_atualizado
+            write_csv(livros)
+            return livro_atualizado
+    raise HTTPException(status_code=404, detail="O livro nao foi encontrado")
+
+@router.delete("/livros/{livro_id}", response_model=dict)
+def deletar_livro(livro_id: int):
+    livros = listar_livros()
+    livros_filtrados = [livro for livro in livros
+                          if livro.id != livro_id]
+    if len(livros) == len(livros_filtrados):
+        raise HTTPException(status_code=404, 
+                            detail="O livro nao foi encontrado")
+    write_csv(livros_filtrados)
+    return {"mensagem": "O livro foi deletado com sucesso"}
