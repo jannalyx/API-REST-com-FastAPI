@@ -1,4 +1,5 @@
-from .base import BaseModel
+from pydantic import BaseModel
+from typing import List
 
 class Livro(BaseModel):
     id: int

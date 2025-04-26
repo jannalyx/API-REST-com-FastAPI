@@ -1,4 +1,4 @@
-from .base import BaseModel, date
+from app.utils.imports import BaseModel, List, Optional, date
 
 class Usuario(BaseModel):
     id: int
