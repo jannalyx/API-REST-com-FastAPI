@@ -1,4 +1,7 @@
-from app.utils.imports import BaseModel, List, Optional, date
+from datetime import date
+from typing import List, Optional
+from pydantic import BaseModel
+
 
 class Usuario(BaseModel):
     id: int
