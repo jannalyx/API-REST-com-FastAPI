@@ -9,21 +9,44 @@ CSV_PATH = "csv/livros.csv"
 @router.post("/", response_model=Livro)
 def criar_livro(livro: Livro):
     try:
+        if livro.id <= 0:
+            raise HTTPException(status_code=400, detail="ID deve ser um número positivo.")
+        
+        if not livro.titulo.strip():
+            raise HTTPException(status_code=400, detail="Título não pode ser vazio.")
+        
+        if not livro.autor.strip():
+            raise HTTPException(status_code=400, detail="Autor não pode ser vazio.")
+        
+        if not livro.genero.strip():
+            raise HTTPException(status_code=400, detail="Gênero não pode ser vazio.")
+        
+        if livro.preco <= 0:
+            raise HTTPException(status_code=400, detail="Preço deve ser maior que zero.")
+
         livros = read_csv(CSV_PATH)
-        livros.append(livro.dict())  
-        write_csv(CSV_PATH, livros, fieldnames=livro.dict().keys())  
-        return livro 
+        
+        for existing_livro in livros:
+            if existing_livro["id"] == str(livro.id):
+                raise HTTPException(status_code=400, detail="ID já existe.")
+
+        livros.append(livro.dict())
+        write_csv(CSV_PATH, livros, fieldnames=livro.dict().keys())
+        
+        return livro
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao criar livro: {str(e)}")
 
-@router.get("/", response_model=list[Livro])
-def listar_livros():
+@router.get("/{livro_id}", response_model=Livro)
+def obter_livro(livro_id: int):
     try:
         livros = read_csv(CSV_PATH)
-       
-        return [Livro(**livro) for livro in livros] 
+        for livro in livros:
+            if int(livro["id"]) == livro_id:
+                return Livro(**livro)
+        raise HTTPException(status_code=404, detail="Livro não encontrado")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erro ao listar livros: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Erro ao buscar livro: {str(e)}")
 
 @router.put("/livros/{livro_id}", response_model=Livro)
 def atualizar_livro(livro_id: int, livro_atualizado: Livro):
