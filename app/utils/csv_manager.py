@@ -11,3 +11,12 @@ def write_csv(file_path: str, data: List[Dict], fieldnames: List[str]):
         writer = csv.DictWriter(file, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(data)
+
+def read_pedidos_csv(file_path: str) -> List[Dict]:
+    pedidos = read_csv(file_path)
+    for pedido in pedidos:
+        pedido['livros'] = eval(pedido['livros']) 
+    return pedidos
+
+def write_pedidos_csv(file_path: str, pedidos: List[Dict], fieldnames: List[str]):
+    write_csv(file_path, pedidos, fieldnames)

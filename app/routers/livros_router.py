@@ -19,12 +19,13 @@ def criar_livro(livro: Livro):
     try:
         if livro.id <= 0:
             raise HTTPException(status_code=400, detail="ID deve ser um número positivo.")
-        if not livro.titulo.strip():
-            raise HTTPException(status_code=400, detail="Título não pode ser vazio.")
-        if not livro.autor.strip():
-            raise HTTPException(status_code=400, detail="Autor não pode ser vazio.")
-        if not livro.genero.strip():
-            raise HTTPException(status_code=400, detail="Gênero não pode ser vazio.")
+
+        for campo, valor in [("Título", livro.titulo), ("Autor", livro.autor), ("Gênero", livro.genero)]:
+            if not valor.strip():
+                raise HTTPException(status_code=400, detail=f"{campo} não pode ser vazio.")
+            if "string" in valor.strip().lower():
+                raise HTTPException(status_code=400, detail=f"{campo} não pode conter a palavra 'string'.")
+
         if livro.preco <= 0:
             raise HTTPException(status_code=400, detail="Preço deve ser maior que zero.")
 
@@ -39,6 +40,7 @@ def criar_livro(livro: Livro):
         return livro
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao criar livro: {str(e)}")
+
 
 @router.get("/", response_model=List[Livro])
 def listar_todos_livros():
