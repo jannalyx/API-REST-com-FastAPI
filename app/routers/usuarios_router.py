@@ -1,11 +1,18 @@
 from fastapi import APIRouter, HTTPException
 from typing import List
 from app.models.usuario import Usuario
-from app.utils.csv_manager import read_csv, write_csv
+from app.utils.csv_manager import read_csv, write_csv, contar_registros_csv
+import os 
 
 router = APIRouter(prefix="/usuarios", tags=["Usuarios"])
 
 CSV_PATH = "csv/usuarios.csv"
+CAMINHO_CSV_USUARIOS = os.path.join("csv/usuarios.csv")
+
+@router.get("/quantidade")
+def contar_usuarios():
+    quantidade = contar_registros_csv(CAMINHO_CSV_USUARIOS)
+    return {"quantidade": quantidade}
 
 def listar_usuarios() -> List[Usuario]:
     try:
