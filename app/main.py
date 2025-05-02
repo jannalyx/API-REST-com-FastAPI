@@ -4,6 +4,7 @@ from app.routers.livros_router import router as livros_router
 from app.routers.usuarios_router import router as usuarios_router
 from app.routers.pedidos_router import router as pedidos_router
 
+
 app = FastAPI()
 
 app.include_router(livros_router)

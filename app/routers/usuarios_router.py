@@ -57,3 +57,4 @@ def deletar_usuario(usuario_id: int):
         return {"mensagem": "Usuário deletado com sucesso"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao deletar usuário: {str(e)}")
+    
