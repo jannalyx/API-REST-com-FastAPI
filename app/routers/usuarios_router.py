@@ -1,18 +1,14 @@
-from fastapi import APIRouter, HTTPException
-from typing import List
+from fastapi import APIRouter, HTTPException, Query
+from typing import List, Optional
+from datetime import datetime
 from app.models.usuario import Usuario
-from app.utils.csv_manager import read_csv, write_csv, contar_registros_csv
-import os 
+from app.utils.csv_manager import read_csv, write_csv
+import os
 
 router = APIRouter(prefix="/usuarios", tags=["Usuarios"])
 
 CSV_PATH = "csv/usuarios.csv"
 CAMINHO_CSV_USUARIOS = os.path.join("csv/usuarios.csv")
-
-@router.get("/quantidade")
-def contar_usuarios():
-    quantidade = contar_registros_csv(CAMINHO_CSV_USUARIOS)
-    return {"quantidade": quantidade}
 
 def listar_usuarios() -> List[Usuario]:
     try:
@@ -20,6 +16,15 @@ def listar_usuarios() -> List[Usuario]:
         return [Usuario(**usuario) for usuario in usuarios_dict]
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao listar usuários: {str(e)}")
+
+@router.get("/quantidade")
+def contar_usuarios():
+    try:
+        usuarios = listar_usuarios()
+        quantidade = len(usuarios)
+        return {"quantidade": quantidade}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao contar usuários: {str(e)}")
 
 @router.post("/", response_model=Usuario)
 def criar_usuario(usuario: Usuario):
@@ -64,4 +69,40 @@ def deletar_usuario(usuario_id: int):
         return {"mensagem": "Usuário deletado com sucesso"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao deletar usuário: {str(e)}")
-    
+
+@router.get("/filtrar", response_model=List[Usuario], summary="Filtrar usuários por atributos")
+def filtrar_usuarios(
+    usuario_id: Optional[int] = None,
+    nome: Optional[str] = None,
+    email: Optional[str] = None,
+    cpf: Optional[str] = None,
+    data_cadastro: Optional[str] = Query(None, alias="dataCadastro")
+):
+    try:
+        usuarios_dict = read_csv(CSV_PATH)
+        usuarios = [Usuario(**usuario) for usuario in usuarios_dict]
+        
+        filtrados = []
+
+        for usuario in usuarios:
+            if usuario_id and usuario.id != usuario_id:
+                continue
+            if nome and nome.lower() not in usuario.nome.lower():
+                continue
+            if email and email.lower() not in usuario.email.lower():
+                continue
+            if cpf and cpf != usuario.cpf:
+                continue
+            if data_cadastro:
+                try:
+                    data_cadastro_obj = datetime.strptime(data_cadastro, "%Y-%m-%d").date()
+                    if usuario.data_cadastro != data_cadastro_obj:
+                        continue
+                except ValueError:
+                    raise HTTPException(status_code=400, detail="Formato de data de cadastro inválido (use AAAA-MM-DD).")
+            
+            filtrados.append(usuario)
+
+        return filtrados
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao filtrar usuários: {str(e)}")

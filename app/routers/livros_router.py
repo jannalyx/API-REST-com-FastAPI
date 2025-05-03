@@ -1,18 +1,20 @@
-from fastapi import APIRouter, HTTPException
-from typing import List
+from fastapi import APIRouter, HTTPException, Query
+from typing import List, Optional
 from app.models.livro import Livro
 from app.utils.csv_manager import read_csv, write_csv, contar_registros_csv
-import os 
+import os
 
 router = APIRouter(prefix="/livros", tags=["Livros"])
 
 CSV_PATH = "csv/livros.csv"
 CAMINHO_CSV_LIVROS = os.path.join("csv/livros.csv")
 
-@router.get("quantidade/")
+
+@router.get("/quantidade")
 def contar_livros():
     quantidade = contar_registros_csv(CAMINHO_CSV_LIVROS)
     return {"quantidade": quantidade}
+
 
 def listar_livros() -> List[Livro]:
     try:
@@ -20,6 +22,7 @@ def listar_livros() -> List[Livro]:
         return [Livro(**livro) for livro in livros_dict]
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao listar livros: {str(e)}")
+
 
 @router.post("/", response_model=Livro)
 def criar_livro(livro: Livro):
@@ -53,6 +56,7 @@ def criar_livro(livro: Livro):
 def listar_todos_livros():
     return listar_livros()
 
+
 @router.put("/{livro_id}", response_model=Livro)
 def atualizar_livro(livro_id: int, livro_atualizado: Livro):
     try:
@@ -66,6 +70,7 @@ def atualizar_livro(livro_id: int, livro_atualizado: Livro):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao atualizar livro: {str(e)}")
 
+
 @router.delete("/{livro_id}", response_model=dict)
 def deletar_livro(livro_id: int):
     try:
@@ -77,3 +82,39 @@ def deletar_livro(livro_id: int):
         return {"mensagem": "O livro foi deletado com sucesso"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao deletar livro: {str(e)}")
+
+@router.get("/filtrar", response_model=List[Livro], summary="Filtrar livros por atributos")
+def filtrar_livros(
+    id: Optional[int] = None,
+    titulo: Optional[str] = None,
+    autor: Optional[str] = None,
+    genero: Optional[str] = None,
+    precoMin: Optional[float] = Query(None, alias="precoMin"),
+    precoMax: Optional[float] = Query(None, alias="precoMax")
+):
+    try:
+        livros_dict = read_csv(CSV_PATH) 
+        for livro in livros_dict:
+            livro['preco'] = float(livro['preco']) 
+        livros = [Livro(**livro) for livro in livros_dict]
+        
+        filtrados = []
+
+        for livro in livros:
+            if id and livro.id != id:
+                continue
+            if titulo and titulo.lower() not in livro.titulo.lower():
+                continue
+            if autor and autor.lower() not in livro.autor.lower():
+                continue
+            if genero and genero.lower() != livro.genero.lower():
+                continue
+            if precoMin is not None and livro.preco < precoMin:
+                continue
+            if precoMax is not None and livro.preco > precoMax:
+                continue
+            filtrados.append(livro)
+
+        return filtrados
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao filtrar livros: {str(e)}")
