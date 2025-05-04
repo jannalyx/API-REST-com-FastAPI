@@ -29,3 +29,4 @@ def contar_registros_csv(caminho_arquivo: str) -> int:
         leitor = csv.reader(arquivo)
         next(leitor, None) 
         return sum(1 for _ in leitor)
+

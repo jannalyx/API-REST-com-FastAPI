@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Query
 from typing import List, Optional
 from app.models.livro import Livro
 from app.utils.csv_manager import read_csv, write_csv, contar_registros_csv
+import hashlib
 import os
 
 router = APIRouter(prefix="/livros", tags=["Livros"])
@@ -56,16 +57,28 @@ def criar_livro(livro: Livro):
 def listar_todos_livros():
     return listar_livros()
 
-
 @router.put("/{livro_id}", response_model=Livro)
 def atualizar_livro(livro_id: int, livro_atualizado: Livro):
     try:
+        if livro_atualizado.id != livro_id:
+            raise HTTPException(status_code=400, detail="O ID não pode ser alterado.")
+
+        for campo, valor in [("Título", livro_atualizado.titulo), ("Autor", livro_atualizado.autor), ("Gênero", livro_atualizado.genero)]:
+            if not valor.strip():
+                raise HTTPException(status_code=400, detail=f"{campo} não pode ser vazio.")
+            if "string" in valor.strip().lower():
+                raise HTTPException(status_code=400, detail=f"{campo} não pode conter a palavra 'string'.")
+
+        if livro_atualizado.preco <= 0:
+            raise HTTPException(status_code=400, detail="Preço deve ser maior que zero.")
+
         livros = listar_livros()
         for i, livro in enumerate(livros):
             if livro.id == livro_id:
                 livros[i] = livro_atualizado
                 write_csv(CSV_PATH, [l.dict() for l in livros], fieldnames=livro_atualizado.dict().keys())
                 return livro_atualizado
+        
         raise HTTPException(status_code=404, detail="O livro não foi encontrado")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao atualizar livro: {str(e)}")
@@ -118,3 +131,16 @@ def filtrar_livros(
         return filtrados
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao filtrar livros: {str(e)}")
+    
+@router.get("/hash", summary="Retornar o hash SHA256 do arquivo CSV de livros")
+def hash_arquivo_csv_livros():
+    try:
+        with open(CSV_PATH, "rb") as f:
+            conteudo = f.read()
+            hash_sha256 = hashlib.sha256(conteudo).hexdigest()
+        return {"hash_sha256": hash_sha256}
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Arquivo CSV de livros não encontrado.")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao calcular hash: {str(e)}")
+

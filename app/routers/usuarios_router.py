@@ -3,6 +3,7 @@ from typing import List, Optional
 from datetime import datetime
 from app.models.usuario import Usuario
 from app.utils.csv_manager import read_csv, write_csv
+import hashlib
 import os
 
 router = APIRouter(prefix="/usuarios", tags=["Usuarios"])
@@ -106,3 +107,15 @@ def filtrar_usuarios(
         return filtrados
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao filtrar usuários: {str(e)}")
+    
+@router.get("/hash", summary="Retornar o hash SHA256 do arquivo CSV de usuários")
+def hash_arquivo_csv_usuarios():
+    try:
+        with open(CSV_PATH, "rb") as f:
+            conteudo = f.read()
+            hash_sha256 = hashlib.sha256(conteudo).hexdigest()
+        return {"hash_sha256": hash_sha256}
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Arquivo CSV de usuários não encontrado.")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao calcular hash: {str(e)}")

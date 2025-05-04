@@ -7,3 +7,4 @@ class Livro(BaseModel):
     autor: str
     genero: str
     preco: float
+

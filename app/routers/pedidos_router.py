@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Query
 from typing import List, Optional
 from app.models.pedido import Pedido
 from app.utils.csv_manager import read_pedidos_csv, write_csv, contar_registros_csv
+import hashlib
 import os
 from datetime import datetime
 
@@ -106,3 +107,15 @@ def filtrar_pedidos(
         return filtrados
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao filtrar pedidos: {str(e)}")
+
+@router.get("/hash", summary="Retornar o hash SHA256 do arquivo CSV de pedidos")
+def hash_arquivo_csv_pedidos():
+    try:
+        with open(CSV_PATH, "rb") as f:
+            conteudo = f.read()
+            hash_sha256 = hashlib.sha256(conteudo).hexdigest()
+        return {"hash_sha256": hash_sha256}
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Arquivo CSV de pedidos não encontrado.")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao calcular hash: {str(e)}")
