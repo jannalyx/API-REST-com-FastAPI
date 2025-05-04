@@ -3,14 +3,18 @@ from fastapi.responses import FileResponse
 import zipfile
 import os
 from pathlib import Path
+from datetime import datetime
 
 router = APIRouter(prefix="/exportar", tags=["Exportação"])
 
 @router.get("/zip", summary="Exportar CSVs em ZIP")
 def exportar_csv_zip():
     try:
-        base_dir = Path(__file__).resolve().parent.parent
+        base_dir = Path(__file__).resolve().parent.parent.parent
         pasta_csv = base_dir / "csv"
+
+        if not pasta_csv.exists():
+            os.makedirs(pasta_csv)
 
         arquivos_csv = [
             pasta_csv / "usuarios.csv",
@@ -18,7 +22,8 @@ def exportar_csv_zip():
             pasta_csv / "pedidos.csv",
         ]
 
-        zip_path = pasta_csv / "exportacao.zip"
+        nome_zip = f"exportacao_{datetime.now().strftime('%Y%m%d_%H%M%S')}.zip"
+        zip_path = pasta_csv / nome_zip
 
         with zipfile.ZipFile(zip_path, "w") as zipf:
             for arquivo in arquivos_csv:
@@ -29,7 +34,7 @@ def exportar_csv_zip():
 
         return FileResponse(
             path=zip_path,
-            filename="exportacao.zip",
+            filename=nome_zip,
             media_type="application/zip"
         )
 
