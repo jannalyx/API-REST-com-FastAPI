@@ -5,6 +5,7 @@ from app.utils.csv_manager import read_pedidos_csv, write_csv, contar_registros_
 import hashlib
 import os
 from datetime import datetime
+from app.utils.logger import logger
 
 router = APIRouter(prefix="/pedidos", tags=["Pedidos"])
 
@@ -36,8 +37,10 @@ def criar_pedido(pedido: Pedido):
                 raise HTTPException(status_code=400, detail="ID já existe.")
         pedidos.append(pedido.dict())
         write_csv(CSV_PATH, pedidos, fieldnames=pedido.dict().keys())
+        logger.info(f"Pedido criado com sucesso: ID {pedido.id}")
         return pedido
     except Exception as e:
+        logger.error(f"Erro ao criar pedido: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Erro ao criar pedido: {str(e)}")
 
 @router.put("/{pedido_id}", response_model=Pedido)
@@ -48,9 +51,12 @@ def atualizar_pedido(pedido_id: int, pedido_atualizado: Pedido):
             if pedido.id == pedido_id:
                 pedidos[i] = pedido_atualizado
                 write_csv(CSV_PATH, [p.dict() for p in pedidos], fieldnames=pedido_atualizado.dict().keys())
+                logger.info(f"Pedido atualizado com sucesso: ID {pedido_id}")
                 return pedido_atualizado
+        logger.warning(f"Pedido com ID {pedido_id} nao encontrado para atualizacao.")
         raise HTTPException(status_code=404, detail="Pedido não encontrado")
     except Exception as e:
+        logger.error(f"Erro ao atualizar pedido ID {pedido_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Erro ao atualizar pedido: {str(e)}")
 
 @router.delete("/{pedido_id}", response_model=dict)
@@ -59,10 +65,13 @@ def deletar_pedido(pedido_id: int):
         pedidos = listar_pedidos()
         pedidos_filtrados = [pedido for pedido in pedidos if pedido.id != pedido_id]
         if len(pedidos) == len(pedidos_filtrados):
+            logger.warning(f"Pedido com ID {pedido_id} nao encontrado para exclusao.")
             raise HTTPException(status_code=404, detail="Pedido não encontrado")
         write_csv(CSV_PATH, [p.dict() for p in pedidos_filtrados], fieldnames=pedidos[0].dict().keys())
+        logger.info(f"Pedido deletado com sucesso: ID {pedido_id}")
         return {"mensagem": "Pedido deletado com sucesso"}
     except Exception as e:
+        logger.error(f"Erro ao deletar pedido ID {pedido_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Erro ao deletar pedido: {str(e)}")
 
 @router.get("/filtrar", response_model=List[Pedido], summary="Filtrar pedidos por atributos")

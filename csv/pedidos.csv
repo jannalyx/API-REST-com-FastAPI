@@ -2,3 +2,4 @@ id,usuario_id,data_pedido,livros,status,valor_total
 1,2,2025-04-26,[1],pendente,45.0
 2,3,2025-04-27,[2],comprado,70.0
 0,0,2025-05-03,[0],comprado,0.0
+10,1,2025-05-05,[0],comprado,100.0

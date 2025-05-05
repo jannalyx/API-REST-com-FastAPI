@@ -5,6 +5,7 @@ from app.models.usuario import Usuario
 from app.utils.csv_manager import read_csv, write_csv
 import hashlib
 import os
+from app.utils.logger import logger
 
 router = APIRouter(prefix="/usuarios", tags=["Usuarios"])
 
@@ -38,8 +39,10 @@ def criar_usuario(usuario: Usuario):
                 raise HTTPException(status_code=400, detail="ID já existe.")
         usuarios.append(usuario.dict())
         write_csv(CSV_PATH, usuarios, fieldnames=usuario.dict().keys())
+        logger.info(f"Usuario criado com sucesso: ID {usuario.id}")
         return usuario
     except Exception as e:
+        logger.error(f"Erro ao criar usuario: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Erro ao criar usuário: {str(e)}")
 
 @router.get("/", response_model=List[Usuario])
@@ -54,9 +57,12 @@ def atualizar_usuario(usuario_id: int, usuario_atualizado: Usuario):
             if usuario.id == usuario_id:
                 usuarios[i] = usuario_atualizado
                 write_csv(CSV_PATH, [u.dict() for u in usuarios], fieldnames=usuario_atualizado.dict().keys())
+                logger.info(f"Usuario atualizado com sucesso: ID {usuario_id}")
                 return usuario_atualizado
+        logger.warning(f"Usuario com ID {usuario_id} nao encontrado para atualizacao.")
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
     except Exception as e:
+        logger.error(f"Erro ao atualizar usuario ID {usuario_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Erro ao atualizar usuário: {str(e)}")
 
 @router.delete("/{usuario_id}", response_model=dict)
@@ -65,10 +71,13 @@ def deletar_usuario(usuario_id: int):
         usuarios = listar_usuarios()
         usuarios_filtrados = [usuario for usuario in usuarios if usuario.id != usuario_id]
         if len(usuarios) == len(usuarios_filtrados):
+            logger.warning(f"Usuario com ID {usuario_id} nao encontrado para exclusao.")
             raise HTTPException(status_code=404, detail="Usuário não encontrado")
         write_csv(CSV_PATH, [u.dict() for u in usuarios_filtrados], fieldnames=usuarios[0].dict().keys())
+        logger.info(f"Usuario deletado com sucesso: ID {usuario_id}")
         return {"mensagem": "Usuário deletado com sucesso"}
     except Exception as e:
+        logger.error(f"Erro ao deletar usuario ID {usuario_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Erro ao deletar usuário: {str(e)}")
 
 @router.get("/filtrar", response_model=List[Usuario], summary="Filtrar usuários por atributos")
