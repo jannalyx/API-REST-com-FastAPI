@@ -6,6 +6,8 @@ import hashlib
 import os
 from datetime import datetime
 from app.utils.logger import logger
+from fastapi.responses import FileResponse
+from app.utils.xml_converter import converter_csv_para_xml
 
 router = APIRouter(prefix="/pedidos", tags=["Pedidos"])
 
@@ -128,3 +130,12 @@ def hash_arquivo_csv_pedidos():
         raise HTTPException(status_code=404, detail="Arquivo CSV de pedidos não encontrado.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao calcular hash: {str(e)}")
+    
+@router.get("/exportar-xml", response_class=FileResponse)
+def exportar_pedidos_para_xml():
+    try:
+        xml_path = CSV_PATH.replace(".csv", ".xml")
+        converter_csv_para_xml(CSV_PATH, xml_path, "pedidos", "pedido")
+        return FileResponse(xml_path, media_type='application/xml', filename=os.path.basename(xml_path))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao exportar XML: {str(e)}")

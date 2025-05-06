@@ -40,3 +40,6 @@ def exportar_csv_zip():
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao gerar ZIP: {str(e)}")
+    
+
+
