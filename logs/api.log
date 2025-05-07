@@ -11,3 +11,4 @@
 2025-05-05 14:31:32 - INFO - Livro ID 50 atualizado com sucesso.
 2025-05-05 14:35:06 - ERROR - Erro inesperado ao atualizar livro ID 50: 400: O ID nao pode ser alterado.
 2025-05-05 18:32:59 - INFO - Pedido criado com sucesso: ID 10
+2025-05-06 21:46:40 - INFO - Usuario criado com sucesso: ID 5
