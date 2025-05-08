@@ -36,3 +36,5 @@
 2025-05-07 22:12:39 - INFO - [Exportação] Arquivo adicionado ao ZIP: livros.csv
 2025-05-07 22:12:39 - INFO - [Exportação] Arquivo adicionado ao ZIP: pedidos.csv
 2025-05-07 22:12:39 - INFO - [Exportação] ZIP gerado com sucesso: exportacao_20250507_221239.zip
+2025-05-08 10:41:33 - INFO - 8 livros listados com sucesso.
+2025-05-08 10:41:33 - INFO - Livro 50 deletado com sucesso.
