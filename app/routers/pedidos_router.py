@@ -16,16 +16,23 @@ CAMINHO_CSV_PEDIDOS = os.path.join("csv/pedidos.csv")
 
 @router.get("/quantidade")
 def contar_pedidos():
-    quantidade = contar_registros_csv(CAMINHO_CSV_PEDIDOS)
-    return {"quantidade": quantidade}
+    try:
+        quantidade = contar_registros_csv(CAMINHO_CSV_PEDIDOS)
+        logger.info(f"Quantidade total de pedidos: {quantidade}")
+        return {"quantidade": quantidade}
+    except Exception as e:
+        logger.error(f"Erro ao contar pedidos: {str(e)}")
+        raise HTTPException(status_code=500, detail="Erro ao contar pedidos.")
 
 @router.get("/", response_model=List[Pedido])
 def listar_pedidos():
     try:
         pedidos_dict = read_pedidos_csv(CSV_PATH)  
         pedidos = [Pedido(**pedido) for pedido in pedidos_dict] 
+        logger.info(f"{len(pedidos)} pedidos listados com sucesso.")
         return pedidos
     except Exception as e:
+        logger.error(f"Erro ao listar pedidos: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Erro ao listar pedidos: {str(e)}")
 
 @router.post("/", response_model=Pedido)
@@ -115,8 +122,11 @@ def filtrar_pedidos(
 
             filtrados.append(pedido)
 
+        logger.info(f"{len(filtrados)} pedido(s) retornado(s) pelos filtros aplicados.")
         return filtrados
+    
     except Exception as e:
+        logger.error(f"Erro ao filtrar pedidos: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Erro ao filtrar pedidos: {str(e)}")
 
 @router.get("/hash", summary="Retornar o hash SHA256 do arquivo CSV de pedidos")
@@ -125,17 +135,22 @@ def hash_arquivo_csv_pedidos():
         with open(CSV_PATH, "rb") as f:
             conteudo = f.read()
             hash_sha256 = hashlib.sha256(conteudo).hexdigest()
+        logger.info("Hash SHA256 de pedidos calculado com sucesso.")
         return {"hash_sha256": hash_sha256}
     except FileNotFoundError:
+        logger.warning("Arquivo CSV de pedidos não encontrado ao tentar calcular hash.")
         raise HTTPException(status_code=404, detail="Arquivo CSV de pedidos não encontrado.")
     except Exception as e:
+        logger.error(f"Erro ao calcular hash do CSV: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Erro ao calcular hash: {str(e)}")
     
 @router.get("/exportar-xml", response_class=FileResponse)
 def exportar_pedidos_para_xml():
     try:
         xml_path = CSV_PATH.replace(".csv", ".xml")
+        logger.info("Arquivo XML de pedidos gerado e exportado com sucesso.")
         converter_csv_para_xml(CSV_PATH, xml_path, "pedidos", "pedido")
         return FileResponse(xml_path, media_type='application/xml', filename=os.path.basename(xml_path))
     except Exception as e:
+        logger.error(f"Erro ao exportar pedidos para XML: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Erro ao exportar XML: {str(e)}")

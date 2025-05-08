@@ -26,8 +26,10 @@ def contar_usuarios():
     try:
         usuarios = listar_usuarios()
         quantidade = len(usuarios)
+        logger.info(f"Quantidade total de usuários: {quantidade}")
         return {"quantidade": quantidade}
     except Exception as e:
+        logger.error(f"Erro ao contar usuários: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Erro ao contar usuários: {str(e)}")
 
 @router.post("/", response_model=Usuario)
@@ -49,7 +51,12 @@ def criar_usuario(usuario: Usuario):
 
 @router.get("/", response_model=List[Usuario])
 def listar_todos_usuarios():
-    return listar_usuarios()
+    try:
+        logger.info(f"{len(listar_usuarios)} usuários listados com sucesso.")
+        return listar_usuarios()
+    except Exception as e:
+        logger.error(f"Erro ao listar usuários: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Erro ao listar usuários: {str(e)}")
 
 @router.put("/{usuario_id}", response_model=Usuario)
 def atualizar_usuario(usuario_id: int, usuario_atualizado: Usuario):
@@ -114,9 +121,10 @@ def filtrar_usuarios(
                     raise HTTPException(status_code=400, detail="Formato de data de cadastro inválido (use AAAA-MM-DD).")
             
             filtrados.append(usuario)
-
+        logger.info(f"{len(filtrados)} usuário(s) retornado(s) pelos filtros aplicados.")
         return filtrados
     except Exception as e:
+        logger.error(f"Erro ao filtrar usuários: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Erro ao filtrar usuários: {str(e)}")
     
 @router.get("/hash", summary="Retornar o hash SHA256 do arquivo CSV de usuários")
@@ -125,17 +133,22 @@ def hash_arquivo_csv_usuarios():
         with open(CSV_PATH, "rb") as f:
             conteudo = f.read()
             hash_sha256 = hashlib.sha256(conteudo).hexdigest()
+        logger.info("Hash SHA256 de usuários calculado com sucesso.")
         return {"hash_sha256": hash_sha256}
     except FileNotFoundError:
+        logger.warning("Arquivo CSV de usuários não encontrado ao tentar calcular hash.")
         raise HTTPException(status_code=404, detail="Arquivo CSV de usuários não encontrado.")
     except Exception as e:
+        logger.error(f"Erro ao calcular hash do CSV: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Erro ao calcular hash: {str(e)}")
     
 @router.get("/exportar-xml", response_class=FileResponse)
 def exportar_usuarios_para_xml():
     try:
         xml_path = CSV_PATH.replace(".csv", ".xml")
+        logger.info("Arquivo XML de usuários gerado e exportado com sucesso.")
         converter_csv_para_xml(CSV_PATH, xml_path, "usuarios", "usuario")
         return FileResponse(xml_path, media_type='application/xml', filename=os.path.basename(xml_path))
     except Exception as e:
+        logger.error(f"Erro ao exportar usuário para XML: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Erro ao exportar XML: {str(e)}")
