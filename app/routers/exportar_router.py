@@ -4,6 +4,7 @@ import zipfile
 import os
 from pathlib import Path
 from datetime import datetime
+from app.utils.logger import logger 
 
 router = APIRouter(prefix="/exportar", tags=["Exportação"])
 
@@ -15,6 +16,7 @@ def exportar_csv_zip():
 
         if not pasta_csv.exists():
             os.makedirs(pasta_csv)
+            logger.info(f"[Exportação] Pasta 'csv' criada em: {pasta_csv}")
 
         arquivos_csv = [
             pasta_csv / "usuarios.csv",
@@ -29,9 +31,12 @@ def exportar_csv_zip():
             for arquivo in arquivos_csv:
                 if arquivo.exists():
                     zipf.write(arquivo, arcname=arquivo.name)
+                    logger.info(f"[Exportação] Arquivo adicionado ao ZIP: {arquivo.name}")
                 else:
+                    logger.error(f"[Exportação] Arquivo não encontrado: {arquivo.name}")
                     raise FileNotFoundError(f"Arquivo não encontrado: {arquivo.name}")
 
+        logger.info(f"[Exportação] ZIP gerado com sucesso: {zip_path.name}")
         return FileResponse(
             path=zip_path,
             filename=nome_zip,
@@ -39,7 +44,5 @@ def exportar_csv_zip():
         )
 
     except Exception as e:
+        logger.error(f"[Exportação] Erro ao gerar ZIP: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Erro ao gerar ZIP: {str(e)}")
-    
-
-

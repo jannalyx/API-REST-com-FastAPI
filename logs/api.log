@@ -12,3 +12,27 @@
 2025-05-05 14:35:06 - ERROR - Erro inesperado ao atualizar livro ID 50: 400: O ID nao pode ser alterado.
 2025-05-05 18:32:59 - INFO - Pedido criado com sucesso: ID 10
 2025-05-06 21:46:40 - INFO - Usuario criado com sucesso: ID 5
+2025-05-07 16:09:50 - INFO - Livro 8 deletado com sucesso.
+2025-05-07 21:43:35 - INFO - Rota GET /livros/ acessada para listar todos os livros.
+2025-05-07 21:43:35 - INFO - 8 livros listados com sucesso.
+2025-05-07 21:43:55 - INFO - Quantidade total de livros: 8
+2025-05-07 21:44:16 - INFO - 1 livros retornados pelo filtro.
+2025-05-07 21:44:25 - INFO - 0 livros retornados pelo filtro.
+2025-05-07 21:45:24 - INFO - 1 livros retornados pelo filtro.
+2025-05-07 21:46:20 - INFO - Hash SHA256 calculado com sucesso.
+2025-05-07 21:47:05 - INFO - Arquivo XML gerado e exportado com sucesso.
+2025-05-07 21:47:49 - INFO - Hash SHA256 de livros calculado com sucesso.
+2025-05-07 21:57:22 - INFO - 8 livros retornados pelo filtro.
+2025-05-07 21:57:33 - INFO - 8 livros retornados pelo filtro.
+2025-05-07 22:02:18 - ERROR - Nenhum livro encontrado com id = 8.
+2025-05-07 22:02:18 - ERROR - Erro ao filtrar livros: 404: Nenhum livro encontrado com id = 8.
+2025-05-07 22:02:41 - ERROR - Nenhum livro encontrado com título contendo 'nanana'.
+2025-05-07 22:02:41 - ERROR - Erro ao filtrar livros: 404: Nenhum livro encontrado com título contendo 'nanana'.
+2025-05-07 22:02:50 - INFO - 8 livro(s) retornado(s) pelo filtro.
+2025-05-07 22:02:53 - INFO - 8 livro(s) retornado(s) pelo filtro.
+2025-05-07 22:03:59 - ERROR - Valor inválido para precoMin: 0
+2025-05-07 22:04:07 - ERROR - Nenhum livro encontrado com id = 8.
+2025-05-07 22:12:39 - INFO - [Exportação] Arquivo adicionado ao ZIP: usuarios.csv
+2025-05-07 22:12:39 - INFO - [Exportação] Arquivo adicionado ao ZIP: livros.csv
+2025-05-07 22:12:39 - INFO - [Exportação] Arquivo adicionado ao ZIP: pedidos.csv
+2025-05-07 22:12:39 - INFO - [Exportação] ZIP gerado com sucesso: exportacao_20250507_221239.zip

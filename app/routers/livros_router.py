@@ -16,15 +16,23 @@ CAMINHO_CSV_LIVROS = os.path.join("csv/livros.csv")
 
 @router.get("/quantidade")
 def contar_livros():
-    quantidade = contar_registros_csv(CAMINHO_CSV_LIVROS)
-    return {"quantidade": quantidade}
+    try:
+        quantidade = contar_registros_csv(CAMINHO_CSV_LIVROS)
+        logger.info(f"Quantidade total de livros: {quantidade}")
+        return {"quantidade": quantidade}
+    except Exception as e:
+        logger.error(f"Erro ao contar livros: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Erro ao contar livros: {str(e)}")
 
 
 def listar_livros() -> List[Livro]:
     try:
         livros_dict = read_csv(CSV_PATH)
-        return [Livro(**livro) for livro in livros_dict]
+        livros = [Livro(**livro) for livro in livros_dict]
+        logger.info(f"{len(livros)} livros listados com sucesso.")
+        return livros
     except Exception as e:
+        logger.error(f"Erro ao listar livros: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Erro ao listar livros: {str(e)}")
 
 
@@ -59,16 +67,21 @@ def criar_livro(livro: Livro):
         logger.info(f"Livro {livro.id} - '{livro.titulo}' criado com sucesso.")
         return livro
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erro ao criar livro: {str(e)}") 
-        
+        logger.error(f"Erro ao criar livro: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Erro ao criar livro: {str(e)}")
+
+
 @router.get("/", response_model=List[Livro])
 def listar_todos_livros():
+    logger.info("Rota GET /livros/ acessada para listar todos os livros.")
     return listar_livros()
+
 
 @router.put("/{livro_id}", response_model=Livro)
 def atualizar_livro(livro_id: int, livro_atualizado: Livro):
     try:
         if livro_atualizado.id != livro_id:
+            logger.warning("Tentativa de alterar ID do livro.")
             raise HTTPException(status_code=400, detail="O ID nao pode ser alterado.")
 
         for campo, valor in [("Título", livro_atualizado.titulo), ("Autor", livro_atualizado.autor), ("Gênero", livro_atualizado.genero)]:
@@ -90,7 +103,7 @@ def atualizar_livro(livro_id: int, livro_atualizado: Livro):
                 write_csv(CSV_PATH, [l.dict() for l in livros], fieldnames=livro_atualizado.dict().keys())
                 logger.info(f"Livro ID {livro_id} atualizado com sucesso.")
                 return livro_atualizado
-            
+
         logger.warning(f"Livro com ID {livro_id} não encontrado para atualização.")
         raise HTTPException(status_code=404, detail="O livro não foi encontrado")
     except Exception as e:
@@ -104,6 +117,7 @@ def deletar_livro(livro_id: int):
         livros = listar_livros()
         livros_filtrados = [livro for livro in livros if livro.id != livro_id]
         if len(livros) == len(livros_filtrados):
+            logger.warning(f"Tentativa de deletar livro inexistente com ID {livro_id}.")
             raise HTTPException(status_code=404, detail="O livro nao foi encontrado")
         write_csv(CSV_PATH, [l.dict() for l in livros_filtrados], fieldnames=livros[0].dict().keys() if livros else [])
         logger.info(f"Livro {livro_id} deletado com sucesso.")
@@ -122,15 +136,23 @@ def filtrar_livros(
     precoMax: Optional[float] = Query(None, alias="precoMax")
 ):
     try:
-        livros_dict = read_csv(CSV_PATH) 
+        # Validações iniciais
+        if precoMin == 0:
+            logger.error("Valor inválido para precoMin: 0")
+            raise HTTPException(status_code=400, detail="O preço mínimo não pode ser zero.")
+        if precoMax == 0:
+            logger.error("Valor inválido para precoMax: 0")
+            raise HTTPException(status_code=400, detail="O preço máximo não pode ser zero.")
+
+        livros_dict = read_csv(CSV_PATH)
         for livro in livros_dict:
-            livro['preco'] = float(livro['preco']) 
+            livro['preco'] = float(livro['preco'])
         livros = [Livro(**livro) for livro in livros_dict]
-        
+
         filtrados = []
 
         for livro in livros:
-            if id and livro.id != id:
+            if id is not None and livro.id != id:
                 continue
             if titulo and titulo.lower() not in livro.titulo.lower():
                 continue
@@ -144,28 +166,60 @@ def filtrar_livros(
                 continue
             filtrados.append(livro)
 
+        if not filtrados:
+            if id is not None:
+                msg = f"Nenhum livro encontrado com id = {id}."
+                logger.error(msg)
+                raise HTTPException(status_code=404, detail=msg)
+            if titulo:
+                msg = f"Nenhum livro encontrado com título contendo '{titulo}'."
+                logger.error(msg)
+                raise HTTPException(status_code=404, detail=msg)
+            if autor:
+                msg = f"Nenhum livro encontrado com autor contendo '{autor}'."
+                logger.error(msg)
+                raise HTTPException(status_code=404, detail=msg)
+            if genero:
+                msg = f"Nenhum livro encontrado com gênero = '{genero}'."
+                logger.error(msg)
+                raise HTTPException(status_code=404, detail=msg)
+            if precoMin is not None or precoMax is not None:
+                msg = "Nenhum livro encontrado dentro da faixa de preço especificada."
+                logger.error(msg)
+                raise HTTPException(status_code=404, detail=msg)
+
+        logger.info(f"{len(filtrados)} livro(s) retornado(s) pelo filtro.")
         return filtrados
+
+    except HTTPException:
+        raise
     except Exception as e:
+        logger.error(f"Erro ao filtrar livros: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Erro ao filtrar livros: {str(e)}")
-    
+
 @router.get("/hash", summary="Retornar o hash SHA256 do arquivo CSV de livros")
 def hash_arquivo_csv_livros():
     try:
         with open(CSV_PATH, "rb") as f:
             conteudo = f.read()
             hash_sha256 = hashlib.sha256(conteudo).hexdigest()
+        logger.info("Hash SHA256 de livros calculado com sucesso.")
         return {"hash_sha256": hash_sha256}
     except FileNotFoundError:
+        logger.warning("Arquivo CSV de livros não encontrado ao tentar calcular hash.")
         raise HTTPException(status_code=404, detail="Arquivo CSV de livros não encontrado.")
     except Exception as e:
+        logger.error(f"Erro ao calcular hash do CSV: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Erro ao calcular hash: {str(e)}")
+
 
 @router.get("/exportar-xml", response_class=FileResponse)
 def exportar_livros_para_xml():
     try:
         xml_path = CSV_PATH.replace(".csv", ".xml")
         converter_csv_para_xml(CSV_PATH, xml_path, "livros", "livro")
+        logger.info("Arquivo XML gerado e exportado com sucesso.")
         return FileResponse(xml_path, media_type='application/xml', filename=os.path.basename(xml_path))
     except Exception as e:
+        logger.error(f"Erro ao exportar livros para XML: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Erro ao exportar XML: {str(e)}")
-
