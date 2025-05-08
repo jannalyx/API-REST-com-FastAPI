@@ -40,7 +40,7 @@ def listar_livros() -> List[Livro]:
 def criar_livro(livro: Livro):
     try:
         if livro.id <= 0:
-            logger.warning("Tentativa de criar livro com ID invalido.")
+            logger.warning("Tentativa de criar livro com ID inválido.")
             raise HTTPException(status_code=400, detail="ID deve ser um número positivo.")
 
         for campo, valor in [("Título", livro.titulo), ("Autor", livro.autor), ("Gênero", livro.genero)]:
@@ -48,11 +48,11 @@ def criar_livro(livro: Livro):
                 logger.warning(f"Tentativa de criar livro com campo '{campo}' vazio.")
                 raise HTTPException(status_code=400, detail=f"{campo} não pode ser vazio.")
             if "string" in valor.strip().lower():
-                logger.warning(f"Tentativa de criar livro com campo '{campo}' invalido ('string').")
+                logger.warning(f"Tentativa de criar livro com campo '{campo}' inválido ('string').")
                 raise HTTPException(status_code=400, detail=f"{campo} não pode conter a palavra 'string'.")
 
         if livro.preco <= 0:
-            logger.warning("Tentativa de criar livro com preço invalido.")
+            logger.warning("Tentativa de criar livro com preço inválido.")
             raise HTTPException(status_code=400, detail="Preço deve ser maior que zero.")
 
         livros = read_csv(CSV_PATH)
