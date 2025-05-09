@@ -52,8 +52,9 @@ def criar_usuario(usuario: Usuario):
 @router.get("/", response_model=List[Usuario])
 def listar_todos_usuarios():
     try:
-        logger.info(f"{len(listar_usuarios)} usuários listados com sucesso.")
-        return listar_usuarios()
+        usuarios = listar_usuarios()
+        logger.info(f"{len(usuarios)} usuários listados com sucesso.")
+        return usuarios
     except Exception as e:
         logger.error(f"Erro ao listar usuários: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Erro ao listar usuários: {str(e)}")
