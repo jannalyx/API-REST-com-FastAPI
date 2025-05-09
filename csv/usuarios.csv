@@ -5,4 +5,14 @@ id,nome,email,cpf,data_cadastro
 4,Fernanda Souza,fernanda.souza@example.com,456.123.789-01,2025-04-29
 5,Felipe Souza,felipe.souza@email.com,135.246.357-00,2025-05-06
 6,Ana maça,anamaca@gmail.com,54187039857,2025-05-09
-0,string,string,string,2025-05-09
+7,João Mendes,joao.mendes@example.com,32165498700,2025-05-09
+8,Larissa Costa,larissa.costa@example.com,65432178901,2025-05-09
+9,Ricardo Alves,ricardo.alves@example.com,78912345622,2025-05-09
+10,Juliana Rocha,juliana.rocha@example.com,14725836900,2025-05-09
+11,Pedro Nunes,pedro.nunes@example.com,96385274199,2025-05-09
+12,Camila Duarte,camila.duarte@example.com,85274196355,2025-05-09
+13,Gabriel Torres,gabriel.torres@example.com,78945612333,2025-05-09
+14,Marina Oliveira,marina.oliveira@example.com,36925814700,2025-05-09
+15,Eduardo Lima,eduardo.lima@example.com,95175385244,2025-05-09
+16,Renata Barbosa,renata.barbosa@example.com,25814736911,2025-05-09
+17,Thiago Martins,thiago.martins@example.com,14736925888,2025-05-09
