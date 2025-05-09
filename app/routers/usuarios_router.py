@@ -41,6 +41,8 @@ def criar_usuario(usuario: Usuario):
         for existing_usuario in usuarios:
             if existing_usuario["id"] == str(usuario.id):
                 raise HTTPException(status_code=400, detail="ID já existe.")
+            if existing_usuario["cpf"] == str(usuario.cpf):
+                raise HTTPException(status_code=400, detail="CPF já existe.")
         usuarios.append(usuario.dict())
         write_csv(CSV_PATH, usuarios, fieldnames=usuario.dict().keys())
         logger.info(f"Usuario criado com sucesso: ID {usuario.id}")

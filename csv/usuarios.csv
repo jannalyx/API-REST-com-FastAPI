@@ -4,3 +4,5 @@ id,nome,email,cpf,data_cadastro
 3,Beatriz Lima,beatriz.lima@example.com,45678912377,2025-04-26
 4,Fernanda Souza,fernanda.souza@example.com,456.123.789-01,2025-04-29
 5,Felipe Souza,felipe.souza@email.com,135.246.357-00,2025-05-06
+6,Ana maça,anamaca@gmail.com,54187039857,2025-05-09
+0,string,string,string,2025-05-09
