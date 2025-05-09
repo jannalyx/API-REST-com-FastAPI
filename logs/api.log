@@ -40,3 +40,8 @@
 2025-05-08 10:41:33 - INFO - Livro 50 deletado com sucesso.
 2025-05-08 21:24:57 - ERROR - Erro ao listar usuários: object of type 'function' has no len()
 2025-05-08 21:26:11 - INFO - 5 usuários listados com sucesso.
+2025-05-09 11:00:16 - INFO - 5 usuários listados com sucesso.
+2025-05-09 11:00:55 - INFO - Livro 8 - 'Orgulho e Preconceito' criado com sucesso.
+2025-05-09 11:01:27 - INFO - Livro 9 - 'A Cinco Passos de Você' criado com sucesso.
+2025-05-09 11:01:43 - INFO - Livro 10 - 'Heaven Official's Blessing' criado com sucesso.
+2025-05-09 11:02:10 - INFO - Livro 11 - 'It Ends With Us' criado com sucesso.
