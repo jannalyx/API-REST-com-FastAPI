@@ -39,15 +39,22 @@ def listar_pedidos():
 def criar_pedido(pedido: Pedido):
     try:
         if pedido.id <= 0:
-            raise HTTPException(status_code=400, detail="ID deve ser um número positivo.")
+            raise HTTPException(status_code=400, detail="ID deve ser um número inteiro positivo maior que zero.")
+        
         pedidos = read_pedidos_csv(CSV_PATH)
+
         for existing_pedido in pedidos:
-            if existing_pedido["id"] == str(pedido.id):
-                raise HTTPException(status_code=400, detail="ID já existe.")
+            if str(existing_pedido["id"]) == str(pedido.id):
+                raise HTTPException(status_code=400, detail=f"Já existe um pedido com o ID {pedido.id}.")
+        
         pedidos.append(pedido.dict())
-        write_csv(CSV_PATH, pedidos, fieldnames=pedido.dict().keys())
+
+        fieldnames = list(pedido.dict().keys())
+        write_csv(CSV_PATH, pedidos, fieldnames=fieldnames)
+
         logger.info(f"Pedido criado com sucesso: ID {pedido.id}")
         return pedido
+
     except Exception as e:
         logger.error(f"Erro ao criar pedido: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Erro ao criar pedido: {str(e)}")

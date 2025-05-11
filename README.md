@@ -85,6 +85,7 @@ python --version
 Se não tiver o Python, baixe e instale a versão mais recente.
 
 
+
 3. Instale as dependências:
 
 bash

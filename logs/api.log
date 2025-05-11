@@ -101,3 +101,53 @@
 2025-05-09 12:01:52 - INFO - Usuario criado com sucesso: ID 15
 2025-05-09 12:02:00 - INFO - Usuario criado com sucesso: ID 16
 2025-05-09 12:02:08 - INFO - Usuario criado com sucesso: ID 17
+2025-05-09 12:55:30 - INFO - Pedido criado com sucesso: ID 7
+2025-05-09 12:56:30 - INFO - 5 pedidos listados com sucesso.
+2025-05-09 12:56:30 - INFO - Pedido atualizado com sucesso: ID 7
+2025-05-09 12:56:56 - INFO - 5 pedidos listados com sucesso.
+2025-05-09 12:56:56 - INFO - Pedido deletado com sucesso: ID 8
+2025-05-09 12:57:19 - INFO - 1 pedido(s) retornado(s) pelos filtros aplicados.
+2025-05-09 12:59:34 - ERROR - Erro ao criar pedido: 400: ID deve ser um número inteiro positivo maior que zero.
+2025-05-09 13:00:00 - INFO - Arquivo XML de pedidos gerado e exportado com sucesso.
+2025-05-09 13:00:10 - INFO - [Exportação] Arquivo adicionado ao ZIP: usuarios.csv
+2025-05-09 13:00:10 - INFO - [Exportação] Arquivo adicionado ao ZIP: livros.csv
+2025-05-09 13:00:10 - INFO - [Exportação] Arquivo adicionado ao ZIP: pedidos.csv
+2025-05-09 13:00:10 - INFO - [Exportação] ZIP gerado com sucesso: exportacao_20250509_130010.zip
+2025-05-09 13:00:11 - INFO - [Exportação] Arquivo adicionado ao ZIP: usuarios.csv
+2025-05-09 13:00:11 - INFO - [Exportação] Arquivo adicionado ao ZIP: livros.csv
+2025-05-09 13:00:11 - INFO - [Exportação] Arquivo adicionado ao ZIP: pedidos.csv
+2025-05-09 13:00:11 - INFO - [Exportação] ZIP gerado com sucesso: exportacao_20250509_130011.zip
+2025-05-09 13:04:22 - INFO - Pedido criado com sucesso: ID 3
+2025-05-09 13:04:41 - INFO - 5 pedidos listados com sucesso.
+2025-05-09 13:04:41 - INFO - Pedido deletado com sucesso: ID 0
+2025-05-09 13:07:21 - INFO - Pedido criado com sucesso: ID 4
+2025-05-09 13:07:54 - INFO - Pedido criado com sucesso: ID 5
+2025-05-09 13:08:24 - INFO - Pedido criado com sucesso: ID 6
+2025-05-09 13:08:49 - INFO - Pedido criado com sucesso: ID 7
+2025-05-09 13:09:22 - INFO - Pedido criado com sucesso: ID 8
+2025-05-09 13:09:40 - INFO - Pedido criado com sucesso: ID 9
+2025-05-09 13:10:18 - INFO - 10 pedidos listados com sucesso.
+2025-05-09 13:10:18 - INFO - Pedido deletado com sucesso: ID 10
+2025-05-09 13:58:49 - INFO - 9 pedido(s) retornado(s) pelos filtros aplicados.
+2025-05-09 14:00:11 - INFO - 1 pedido(s) retornado(s) pelos filtros aplicados.
+2025-05-09 14:00:29 - INFO - 0 pedido(s) retornado(s) pelos filtros aplicados.
+2025-05-09 14:02:07 - INFO - 1 livro(s) retornado(s) pelo filtro.
+2025-05-09 14:02:25 - INFO - 1 usuário(s) retornado(s) pelos filtros aplicados.
+2025-05-09 14:02:41 - INFO - 1 pedido(s) retornado(s) pelos filtros aplicados.
+2025-05-09 14:02:53 - ERROR - Nenhum livro encontrado com id = 20.
+2025-05-09 14:03:05 - INFO - 0 usuário(s) retornado(s) pelos filtros aplicados.
+2025-05-09 15:12:34 - INFO - Livro 19 - 'O Enigma das Sombras' criado com sucesso.
+2025-05-09 15:13:12 - INFO - Rota GET /livros/ acessada para listar todos os livros.
+2025-05-09 15:13:12 - INFO - 19 livros listados com sucesso.
+2025-05-09 15:13:47 - INFO - 9 pedidos listados com sucesso.
+2025-05-09 15:14:11 - INFO - Quantidade total de livros: 19
+2025-05-09 15:15:23 - INFO - 4 pedido(s) retornado(s) pelos filtros aplicados.
+2025-05-09 15:15:40 - INFO - 5 pedido(s) retornado(s) pelos filtros aplicados.
+2025-05-09 15:16:06 - INFO - 0 pedido(s) retornado(s) pelos filtros aplicados.
+2025-05-09 15:16:27 - INFO - 3 pedido(s) retornado(s) pelos filtros aplicados.
+2025-05-09 15:16:53 - INFO - [Exportação] Arquivo adicionado ao ZIP: usuarios.csv
+2025-05-09 15:16:53 - INFO - [Exportação] Arquivo adicionado ao ZIP: livros.csv
+2025-05-09 15:16:53 - INFO - [Exportação] Arquivo adicionado ao ZIP: pedidos.csv
+2025-05-09 15:16:53 - INFO - [Exportação] ZIP gerado com sucesso: exportacao_20250509_151653.zip
+2025-05-09 15:17:41 - INFO - Hash SHA256 de pedidos calculado com sucesso.
+2025-05-09 15:18:25 - INFO - Arquivo XML de pedidos gerado e exportado com sucesso.

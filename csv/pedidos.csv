@@ -1,5 +1,10 @@
 id,usuario_id,data_pedido,livros,status,valor_total
 1,2,2025-04-26,[1],pendente,45.0
 2,3,2025-04-27,[2],comprado,70.0
-0,0,2025-05-03,[0],comprado,0.0
-10,1,2025-05-05,[0],comprado,100.0
+3,6,2025-05-09,[6],comprado,55.0
+4,4,2025-05-09,[1],pendente,50.0
+5,5,2025-05-09,[3],comprado,80.0
+6,2,2025-05-09,[4],pendente,65.0
+7,3,2025-05-09,"[5, 6]",pendente,45.0
+8,7,2025-05-09,"[6, 7]",comprado,96.5
+9,8,2025-05-09,[7],comprado,75.0
